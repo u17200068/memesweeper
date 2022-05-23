@@ -21,10 +21,12 @@
 #include "MainWindow.h"
 #include "Game.h"
 
+
 Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
-	gfx( wnd )
+	gfx( wnd ),
+	field({ fieldX, fieldY })
 {
 }
 
@@ -42,4 +44,5 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
+	field.DrawField(gfx);
 }
