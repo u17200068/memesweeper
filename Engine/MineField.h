@@ -39,6 +39,7 @@ public:
 	void HandleLeftClick(Vei2 mousePos);
 	void SetAdjacentBombs();
 	bool CheckGameLost();
+	bool CheckGameWon();
 	void HandleRightClick(Vei2 mousePos);
 	static constexpr int nDimensions = 16;
 private:

@@ -63,5 +63,16 @@ void Game::UpdateModel()
 void Game::ComposeFrame()
 {
 	field.DrawField(gfx);
-	SpriteCodex::DrawWinFace(ResultPos, gfx);
+	if (field.CheckGameWon())
+	{
+		SpriteCodex::DrawWinFace(ResultPos, gfx);
+	}
+	else if (!field.CheckGameLost())
+	{
+		SpriteCodex::DrawLoseFace(ResultPos, gfx);
+	}
+	else
+	{
+		SpriteCodex::DrawNormalFace(ResultPos, gfx);
+	}
 }

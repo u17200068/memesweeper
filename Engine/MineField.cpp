@@ -399,6 +399,16 @@ bool MineField::CheckGameLost()
 	return NotGameLost;
 }
 
+bool MineField::CheckGameWon()
+{
+	bool allRevealed = true;
+	for (Tile tile : tiles)
+	{
+		allRevealed = allRevealed && tile.GetState() == Tile::State::Revealed;
+	}
+	return allRevealed && CheckGameLost();
+}
+
 void MineField::HandleRightClick(Vei2 mousePos)
 {
 	assert(mousePos.x >= pos.x && mousePos.x <= pos.x + (nDimensions * Tile::size) &&
