@@ -191,7 +191,7 @@ void MineField::HandleLeftClick(Vei2 mousePos)
 
 void MineField::SetAdjacentBombs()
 {
-	for (int i = 31; i < nDimensions * nDimensions; i++)
+	for (int i = 0; i < nDimensions * nDimensions; i++)
 	{
 		int numOfBombs = 0;
 		//Check Top left
@@ -355,7 +355,7 @@ void MineField::SetAdjacentBombs()
 			}
 		}
 		//Check Everything Else
-		else if(i%16>=1 && i%16<=14)
+		else if(i%16>=1 && i%16<=14 && i<=238)
 		{
 			if (tiles[i + 1].HasMeme())
 			{
