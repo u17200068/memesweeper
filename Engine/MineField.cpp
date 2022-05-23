@@ -24,6 +24,11 @@ bool MineField::Tile::IsGameLost() const
 	return GameLost;
 }
 
+void MineField::Tile::SetAdjacentBombs(int bombs)
+{
+	adjacentBombs = bombs;
+}
+
 void MineField::Tile::ChangeState(State newState)
 {
 	state = newState;
@@ -32,6 +37,7 @@ void MineField::Tile::ChangeState(State newState)
 		GameLost = true;
 	}
 }
+
 
 void MineField::Tile::AddMeme(bool newMeme)
 {
@@ -56,7 +62,7 @@ void MineField::Tile::DrawTile(Graphics& gfx)
 		}
 		else
 		{
-			SpriteCodex::DrawTile0(pos, gfx);
+			SpriteCodex::DrawTile(pos, adjacentBombs ,gfx);
 		}
 		break;
 	}
@@ -111,6 +117,15 @@ void MineField::DrawField(Graphics& gfx)
 	const int EndX = pos.x + (nDimensions * Tile::size);
 	const int StartY = pos.y;
 	const int EndY = pos.y + (nDimensions * Tile::size);
+
+	for (int x = StartX-50; x < EndX + 50; x++)
+	{
+		for (int y = StartY-50; y < EndY + 50; y++)
+		{
+			gfx.PutPixel(x, y, Colors::LightGray);
+		}
+	}
+	
 	for (int x = StartX; x < EndX; x++)
 	{
 		for (int y = StartY; y < EndY; y++)
@@ -121,6 +136,34 @@ void MineField::DrawField(Graphics& gfx)
 	for (int i=0; i < nDimensions*nDimensions; i++)
 	{
 		tiles[i].DrawTile(gfx);
+	}
+	for (int x = StartX - 50; x < EndX + 50; x++)
+	{
+		for (int y = StartY - 50; y < StartY - 50 + 3; y++)
+		{
+			gfx.PutPixel(x, y, Colors::White);
+		}
+	}
+	for (int x = StartX - 50; x < EndX + 50; x++)
+	{
+		for (int y = EndY + 50; y > EndY + 50 - 3; y--)
+		{
+			gfx.PutPixel(x, y, Colors::White);
+		}
+	}
+	for (int x = StartX - 50; x < StartX - 50 + 3; x++)
+	{
+		for (int y = StartY - 50; y < EndY + 50; y++)
+		{
+			gfx.PutPixel(x, y, Colors::White);
+		}
+	}
+	for (int x = EndX + 50; x > EndX + 50 - 3; x--)
+	{
+		for (int y = StartY - 50; y < EndY + 50; y++)
+		{
+			gfx.PutPixel(x, y, Colors::White);
+		}
 	}
 }
 
@@ -138,6 +181,211 @@ void MineField::HandleLeftClick(Vei2 mousePos)
 	if (tiles[index].GetState() == Tile::State::Hidden)
 	{
 		tiles[index].ChangeState(Tile::State::Revealed);
+	}
+}
+
+void MineField::SetAdjacentBombs()
+{
+	for (int i = 0; i < nDimensions * nDimensions; i++)
+	{
+		int numOfBombs = 0;
+		//Check Top left
+		if (i == 0)
+		{
+			if (tiles[i + 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i + nDimensions].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i + nDimensions + 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+		}
+		//Check 1st column
+		else if (i % 16 == 0 && i!=240)
+		{
+			if (tiles[i + 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i + nDimensions].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - nDimensions].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - nDimensions + 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i + nDimensions + 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+		}
+		//Check Top Right
+		if (i == 15)
+		{
+			if (tiles[i - 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i + nDimensions].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i + nDimensions - 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+		}
+		//Check Last Column
+		else if (i % 16 == 15 && i!=255)
+		{
+			if (tiles[i - 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i + nDimensions].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i + nDimensions - 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - nDimensions].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - nDimensions - 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+		}
+		//Check Bottom Left
+		if(i==240)
+		{
+			if (tiles[i + 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - nDimensions].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - nDimensions + 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+		}
+		//Check Last Row
+		else if (i > 240 && i < 255)
+		{
+			if (tiles[i + 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - nDimensions].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - nDimensions + 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - nDimensions - 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+		}
+		//Check Bottom Right
+		if (i == 255)
+		{
+			if (tiles[i - 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - nDimensions].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - nDimensions - 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+		}
+		//Check First Row
+		else if (i > 0 && i < 15)
+		{
+			if (tiles[i + 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i + nDimensions].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i + nDimensions + 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i + nDimensions - 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+		}
+		//Check Everything Else
+		else
+		{
+			if (tiles[i + 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i + nDimensions].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i + nDimensions + 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i + nDimensions - 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - nDimensions].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - nDimensions + 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+			if (tiles[i - nDimensions - 1].HasMeme())
+			{
+				numOfBombs++;
+			}
+		}
+		tiles[i].SetAdjacentBombs(numOfBombs);
 	}
 }
 

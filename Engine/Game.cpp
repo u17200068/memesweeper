@@ -55,6 +55,8 @@ void Game::UpdateModel()
 				field.HandleRightClick(e.GetPos());
 			}
 		}
+		field.SetAdjacentBombs();
+		field.CheckGameLost();
 	}
 }
 
