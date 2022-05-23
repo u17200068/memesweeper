@@ -29,6 +29,11 @@ void MineField::Tile::SetAdjacentBombs(int bombs)
 	adjacentBombs = bombs;
 }
 
+int MineField::Tile::GetAdjacentBombs()
+{
+	return adjacentBombs;
+}
+
 void MineField::Tile::ChangeState(State newState)
 {
 	state = newState;
@@ -186,7 +191,7 @@ void MineField::HandleLeftClick(Vei2 mousePos)
 
 void MineField::SetAdjacentBombs()
 {
-	for (int i = 0; i < nDimensions * nDimensions; i++)
+	for (int i = 31; i < nDimensions * nDimensions; i++)
 	{
 		int numOfBombs = 0;
 		//Check Top left
@@ -350,7 +355,7 @@ void MineField::SetAdjacentBombs()
 			}
 		}
 		//Check Everything Else
-		else
+		else if(i%16>=1 && i%16<=14)
 		{
 			if (tiles[i + 1].HasMeme())
 			{
@@ -402,7 +407,7 @@ bool MineField::CheckGameLost()
 bool MineField::CheckGameWon()
 {
 	bool allRevealed = true;
-	for (Tile tile : tiles)
+	for (const Tile& tile : tiles)
 	{
 		allRevealed = allRevealed && tile.GetState() == Tile::State::Revealed;
 	}
@@ -423,5 +428,9 @@ void MineField::HandleRightClick(Vei2 mousePos)
 	if (tiles[index].GetState() == Tile::State::Hidden)
 	{
 		tiles[index].ChangeState(Tile::State::Flagged);
+	}
+	else if (tiles[index].GetState() == Tile::State::Flagged)
+	{
+		tiles[index].ChangeState(Tile::State::Hidden);
 	}
 }

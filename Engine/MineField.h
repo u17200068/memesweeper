@@ -21,6 +21,7 @@ private:
 		bool HasMeme() const;
 		bool IsGameLost() const;
 		void SetAdjacentBombs(int bombs);
+		int GetAdjacentBombs();
 		void ChangeState(State newState);
 		void AddMeme(bool newMeme);
 		void DrawTile(Graphics& gfx);
