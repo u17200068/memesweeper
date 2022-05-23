@@ -63,4 +63,5 @@ void Game::UpdateModel()
 void Game::ComposeFrame()
 {
 	field.DrawField(gfx);
+	SpriteCodex::DrawWinFace(ResultPos, gfx);
 }

@@ -44,6 +44,7 @@ private:
 	/********************************/
 	/*  User Variables              */
 	MineField field;
+	Vei2 ResultPos = { 370,135 };
 	static constexpr int fieldX = 260; 
 	static constexpr int fieldY = 180;
 	/********************************/
