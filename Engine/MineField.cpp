@@ -19,9 +19,18 @@ bool MineField::Tile::HasMeme() const
 	return hasMeme;
 }
 
+bool MineField::Tile::IsGameLost() const
+{
+	return GameLost;
+}
+
 void MineField::Tile::ChangeState(State newState)
 {
 	state = newState;
+	if (state == Tile::State::Revealed && hasMeme)
+	{
+		GameLost = true;
+	}
 }
 
 void MineField::Tile::AddMeme(bool newMeme)
@@ -130,6 +139,16 @@ void MineField::HandleLeftClick(Vei2 mousePos)
 	{
 		tiles[index].ChangeState(Tile::State::Revealed);
 	}
+}
+
+bool MineField::CheckGameLost()
+{
+	bool NotGameLost = true;
+	for (int i = 0; i < nDimensions * nDimensions; i++)
+	{
+		NotGameLost = NotGameLost && !tiles[i].IsGameLost();
+	}
+	return NotGameLost;
 }
 
 void MineField::HandleRightClick(Vei2 mousePos)

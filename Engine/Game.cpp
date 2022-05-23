@@ -40,17 +40,20 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	while (!wnd.mouse.IsEmpty())
+	if (field.CheckGameLost())
 	{
-		const Mouse::Event e = wnd.mouse.Read();
-		if (e.GetType() == Mouse::Event::Type::LPress)
+		while (!wnd.mouse.IsEmpty())
 		{
-			//Change State of Tile
-			field.HandleLeftClick(e.GetPos());
-		}
-		else if (e.GetType() == Mouse::Event::Type::RPress)
-		{
-			field.HandleRightClick(e.GetPos());
+			const Mouse::Event e = wnd.mouse.Read();
+			if (e.GetType() == Mouse::Event::Type::LPress)
+			{
+				//Change State of Tile
+				field.HandleLeftClick(e.GetPos());
+			}
+			else if (e.GetType() == Mouse::Event::Type::RPress)
+			{
+				field.HandleRightClick(e.GetPos());
+			}
 		}
 	}
 }
