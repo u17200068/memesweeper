@@ -42,6 +42,7 @@ void Game::UpdateModel()
 {
 	if (field.CheckGameLost())
 	{
+		field.SetAdjacentBombs();
 		while (!wnd.mouse.IsEmpty())
 		{
 			const Mouse::Event e = wnd.mouse.Read();
@@ -55,8 +56,6 @@ void Game::UpdateModel()
 				field.HandleRightClick(e.GetPos());
 			}
 		}
-		field.SetAdjacentBombs();
-		field.CheckGameLost();
 	}
 }
 
@@ -69,6 +68,7 @@ void Game::ComposeFrame()
 	}
 	else if (!field.CheckGameLost())
 	{
+		//field.RevealEverything(!field.CheckGameLost());
 		SpriteCodex::DrawLoseFace(ResultPos, gfx);
 	}
 	else

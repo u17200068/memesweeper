@@ -24,6 +24,11 @@ bool MineField::Tile::IsGameLost() const
 	return GameLost;
 }
 
+void MineField::Tile::SetResult(bool result)
+{
+	GameLost = result;
+}
+
 void MineField::Tile::SetAdjacentBombs(int bombs)
 {
 	adjacentBombs = bombs;
@@ -51,25 +56,66 @@ void MineField::Tile::AddMeme(bool newMeme)
 
 void MineField::Tile::DrawTile(Graphics& gfx)
 {
-	switch (state)
+	if (!GameLost)
 	{
-	case Tile::State::Hidden:
-		SpriteCodex::DrawTileButton(pos, gfx);
-		break;
-	case Tile::State::Flagged:
-		SpriteCodex::DrawTileFlag(pos, gfx);
-		break;
-	case Tile::State::Revealed:
-		if (hasMeme)
+		switch (state)
 		{
-			SpriteCodex::DrawTile0(pos, gfx);
-			SpriteCodex::DrawTileBomb(pos, gfx);
+		case Tile::State::Hidden:
+			SpriteCodex::DrawTileButton(pos, gfx);
+			break;
+		case Tile::State::Flagged:
+			SpriteCodex::DrawTileFlag(pos, gfx);
+			break;
+		case Tile::State::Revealed:
+			if (hasMeme)
+			{
+				SpriteCodex::DrawTile0(pos, gfx);
+				SpriteCodex::DrawTileBomb(pos, gfx);
+			}
+			else
+			{
+				SpriteCodex::DrawTile(pos, adjacentBombs ,gfx);
+			}
+			break;
 		}
-		else
+	}
+	else
+	{
+		switch (state)
 		{
-			SpriteCodex::DrawTile(pos, adjacentBombs ,gfx);
+		case Tile::State::Hidden:
+			if (hasMeme)
+			{
+				SpriteCodex::DrawTileBomb(pos, gfx);
+			}
+			else
+			{
+				SpriteCodex::DrawTileButton(pos, gfx);
+			}
+			break;
+		case Tile::State::Flagged:
+			if (hasMeme)
+			{
+				SpriteCodex::DrawTileBomb(pos, gfx);
+				SpriteCodex::DrawTileFlag(pos, gfx);
+			}
+			else
+			{
+				SpriteCodex::DrawTileBomb(pos, gfx);
+				SpriteCodex::DrawTileCross(pos, gfx);
+			}
+			break;
+		case Tile::State::Revealed:
+			if (hasMeme)
+			{
+				SpriteCodex::DrawTileBombRed(pos, gfx);
+			}
+			else
+			{
+				SpriteCodex::DrawTile(pos, adjacentBombs, gfx);
+			}
+			break;
 		}
-		break;
 	}
 }
 
@@ -211,7 +257,7 @@ void MineField::SetAdjacentBombs()
 			}
 		}
 		//Check 1st column
-		else if (i % 16 == 0 && i!=240)
+		else if (i % 16 == 0 && i!=240 && i>=16)
 		{
 			if (tiles[i + 1].HasMeme())
 			{
@@ -400,6 +446,13 @@ bool MineField::CheckGameLost()
 	for (int i = 0; i < nDimensions * nDimensions; i++)
 	{
 		NotGameLost = NotGameLost && !tiles[i].IsGameLost();
+	}
+	if (!NotGameLost)
+	{
+		for (int i = 0; i < nDimensions * nDimensions; i++)
+		{
+			tiles[i].SetResult(!NotGameLost);
+		}
 	}
 	return NotGameLost;
 }

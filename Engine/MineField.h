@@ -20,6 +20,7 @@ private:
 		Vei2 GetPos() const;
 		bool HasMeme() const;
 		bool IsGameLost() const;
+		void SetResult(bool result);
 		void SetAdjacentBombs(int bombs);
 		int GetAdjacentBombs();
 		void ChangeState(State newState);
@@ -41,6 +42,7 @@ public:
 	void SetAdjacentBombs();
 	bool CheckGameLost();
 	bool CheckGameWon();
+	void RevealEverything(bool lost);
 	void HandleRightClick(Vei2 mousePos);
 	static constexpr int nDimensions = 16;
 private:
