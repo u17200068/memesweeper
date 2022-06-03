@@ -24,6 +24,7 @@ private:
 		void SetAdjacentBombs(int bombs);
 		int GetAdjacentBombs();
 		void ChangeState(State newState);
+		bool HasNoNeighbourMemes();
 		void AddMeme(bool newMeme);
 		void DrawTile(Graphics& gfx);
 		MineField::Tile::State MineField::Tile::GetState() const;
@@ -42,8 +43,9 @@ public:
 	void SetAdjacentBombs();
 	bool CheckGameLost();
 	bool CheckGameWon();
-	void RevealEverything(bool lost);
 	void HandleRightClick(Vei2 mousePos);
+	void CheckAdjacentMemes(Vei2 GridPos);
+	void RevealTile(Vei2 GridPos, int index);
 	static constexpr int nDimensions = 16;
 private:
 	Vei2 pos;

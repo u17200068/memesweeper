@@ -48,6 +48,11 @@ void MineField::Tile::ChangeState(State newState)
 	}
 }
 
+bool MineField::Tile::HasNoNeighbourMemes()
+{
+	return adjacentBombs==0;
+}
+
 
 void MineField::Tile::AddMeme(bool newMeme)
 {
@@ -144,7 +149,7 @@ MineField::MineField(Vei2 pos_in)
 	}
 	
 	//Choose amount of memes in board by modifying the divisor
-	const int numberOfMemes = (nDimensions * nDimensions) / 4;
+	const int numberOfMemes = (nDimensions * nDimensions) / 5;
 	std::random_device rd;
 	std::mt19937 rng(rd());
 	std::uniform_int_distribution<int> rand_int(0, (nDimensions * nDimensions) - 1);
@@ -217,7 +222,7 @@ void MineField::DrawField(Graphics& gfx)
 		}
 	}
 }
-
+/*
 void MineField::HandleLeftClick(Vei2 mousePos)
 {
 	assert(mousePos.x >= pos.x && mousePos.x <= pos.x + (nDimensions * Tile::size) &&
@@ -233,6 +238,19 @@ void MineField::HandleLeftClick(Vei2 mousePos)
 	{
 		tiles[index].ChangeState(Tile::State::Revealed);
 	}
+}*/
+
+void MineField::HandleLeftClick(Vei2 mousePos)
+{
+	assert(mousePos.x >= pos.x && mousePos.x <= pos.x + (nDimensions * Tile::size) &&
+		mousePos.y >= pos.y && mousePos.y <= pos.y + (nDimensions * Tile::size));
+
+	// Get the indeces of Virtual 2D array
+	int x_index = (mousePos.x - pos.x) / nDimensions;
+	int y_index = (mousePos.y - pos.y) / nDimensions;
+
+	int index = x_index * nDimensions + y_index;
+	RevealTile({ x_index,y_index }, index);
 }
 
 void MineField::SetAdjacentBombs()
@@ -485,5 +503,35 @@ void MineField::HandleRightClick(Vei2 mousePos)
 	else if (tiles[index].GetState() == Tile::State::Flagged)
 	{
 		tiles[index].ChangeState(Tile::State::Hidden);
+	}
+}
+
+void MineField::RevealTile(Vei2 GridPos,int index)
+{
+	int startX = std::max(0, GridPos.x - 1);
+	int startY = std::max(0, GridPos.y - 1);
+	int endX = std::min(nDimensions - 1, GridPos.x + 1);
+	int endY = std::min(nDimensions - 1, GridPos.y + 1);
+	if (tiles[index].GetState() == Tile::State::Hidden)
+	{
+		tiles[index].ChangeState(Tile::State::Revealed);
+		if (tiles[index].HasMeme())
+		{
+			for (int i = 0; i < nDimensions * nDimensions; i++)
+			{
+				tiles[i].SetResult(true);
+			}
+		}
+		else if (tiles[index].HasNoNeighbourMemes())
+		{
+			for (int x = startX; x <= endX; x++)
+			{
+				for (int y = startY; y <= endY; y++)
+				{
+					int index = x * nDimensions + y;
+					RevealTile({ x, y }, index);
+				}
+			}
+		}
 	}
 }

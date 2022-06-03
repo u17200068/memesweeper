@@ -68,7 +68,6 @@ void Game::ComposeFrame()
 	}
 	else if (!field.CheckGameLost())
 	{
-		//field.RevealEverything(!field.CheckGameLost());
 		SpriteCodex::DrawLoseFace(ResultPos, gfx);
 	}
 	else
